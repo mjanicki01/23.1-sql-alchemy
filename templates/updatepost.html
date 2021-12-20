@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Update Post{% endblock %}
+{% block content %}
+
+    <h1>Update Post</h1>
+    <form action="/updatepost/{{post.id}}" method="POST">
+        <input type="text" name="title" value = {{post.title}}>
+        <input type="text" name="content" value = {{post.content}}>
+        <input type="text" name="creator_id" value={{post.creator_id}} style="display: none">
+        <button>Update Post</button>
+    </form>
+
+
+
+{% endblock %}
