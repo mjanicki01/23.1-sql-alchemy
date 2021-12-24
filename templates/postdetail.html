@@ -5,18 +5,23 @@
     <h1>{{post.title}}</h1>
     
     <h3>{{post.content}}</h3>
-    <p><i>By {{post.creator.first_name}} {{post.creator.last_name}}</i></p>
-    <p><i>Created at {{post.created_at}}</i></p>
+
+    <section id="post-details">
+        <p><i>By {{post.creator.first_name}} {{post.creator.last_name}}</i></p>
+        <p><i>Created at {{post.created_at}}</i></p>
+        <h4>Tags</h4>
+        <ul>
+            {% for tag in tags %}
+            <li><a href="/tag/{{tag[1]}}">{{tag[0]}}</a></li>
+            {% endfor %}
+        </ul>
+    </section>
 
     <form>
         <button formaction="/updatepost/{{post.id}}" formmethod="GET">
             Edit</button>
         <button formaction="/delete/post/{{post.id}}" formmethod="POST">
             Delete</button>
-        <button formaction="/{{post.creator_id}}" formmethod="GET">
-            Cancel</button>
-        <button formaction="/" formmethod="GET">
-            User Index</button>
     </form>
 
 {% endblock %}

@@ -1,4 +1,4 @@
-from models import Users, Posts, db
+from models import Users, Posts, Tags, PostsTags, db
 from app import app
 
 db.drop_all()
@@ -16,7 +16,23 @@ p4 = Posts(title="Favorite book list", content="Too many to fit on one page", cr
 p5 = Posts(title="Favorite snacks", content="Too many to fit on one page", creator_id=2)
 p6 = Posts(title="Another post", content="With some more content", creator_id=3)
 
+t1 = Tags(name="Funny")
+t2 = Tags(name="Cooking")
+t3 = Tags(name="Recommendations")
+
+db.session.add_all([j_shmo, b_brown, k_salad, r_sullivan, 
+p1, p2, p3, p4, p5, p6, 
+t1, t2, t3])
+db.session.commit()
+
+pt1 = PostsTags(post_id=1, tag_id=3)
+pt2 = PostsTags(post_id=2, tag_id=2)
+pt3 = PostsTags(post_id=3, tag_id=1)
+pt4 = PostsTags(post_id=3, tag_id=2)
+pt5 = PostsTags(post_id=4, tag_id=3)
+pt6 = PostsTags(post_id=5, tag_id=2)
+pt7 = PostsTags(post_id=5, tag_id=3)
 
 
-db.session.add_all([j_shmo, b_brown, k_salad, r_sullivan, p1, p2, p3, p4, p5, p6])
+db.session.add_all([pt1, pt2, pt3, pt4, pt5, pt6, pt7])
 db.session.commit()

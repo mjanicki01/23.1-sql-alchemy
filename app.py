@@ -1,6 +1,6 @@
-from flask import Flask, request, render_template, redirect
+from flask import Flask, request, render_template, redirect, flash
 from flask_debugtoolbar import DebugToolbarExtension
-from models import db, connect_db, Users, Posts
+from models import db, connect_db, Users, Posts, Tags, PostsTags
 
 app = Flask(__name__)
 
@@ -21,7 +21,7 @@ def list_users():
     return render_template('index.html', users=users)
 
 
-# User-specific routes & view functions ------------------
+# User-specific routes & view functions -------------------------------------------------------
 
 @app.route("/<int:user_id>")
 def user_detail(user_id):
@@ -39,14 +39,15 @@ def render_add_user():
 
 @app.route('/adduser', methods=["POST"])
 def add_user():
-    first_name = request.form["first_name"]
-    last_name = request.form["last_name"]
-    img_url = request.form["image"]
-    new_user  = Users(first_name=first_name, last_name=last_name, img_url=img_url)
+    new_user  = Users(
+    first_name = request.form["first_name"],
+    last_name = request.form["last_name"],
+    img_url = request.form["image"] or None)
 
     db.session.add(new_user)
     db.session.commit()
 
+    flash("New user added", "success")
     return redirect('/')
 
 
@@ -55,8 +56,8 @@ def delete_user(user_id):
     Users.query.filter(Users.id == user_id).delete()
     db.session.commit()
 
+    flash("User deleted", "success")
     return redirect('/')
-#to-do: Create method in models.py to handle try/except to handle if user has posts (fk constraint violation)
 
 
 @app.route("/update/<int:user_id>")
@@ -76,17 +77,26 @@ def update_user(user_id):
     db.session.add(user)
     db.session.commit()
 
+    flash("User updated", "success")
     return redirect('/')
 
 
 
-# Post-specific routes & view functions ---------------------
+# Post-specific routes & view functions ------------------------------------------
+
+@app.route('/posts')
+def list_posts():
+    posts = Posts.query.all()
+
+    return render_template('indexposts.html', posts=posts)
+
 
 @app.route("/post/<int:post_id>")
 def show_post(post_id):
     post = Posts.query.get_or_404(post_id)
+    tags = db.session.query(Tags.name, PostsTags.tag_id, PostsTags.post_id).join(PostsTags).filter(PostsTags.post_id == post_id).all()
 
-    return render_template("postdetail.html", post=post)
+    return render_template("postdetail.html", post=post, tags=tags)
 
 
 @app.route('/addpost/<int:user_id>')
@@ -106,6 +116,7 @@ def add_post():
     db.session.add(new_post)
     db.session.commit()
 
+    flash("New post added", "success")
     return redirect(f'/{creator_id}')
 
 
@@ -114,6 +125,7 @@ def delete_post(post_id):
     Posts.query.filter(Posts.id == post_id).delete()
     db.session.commit()
 
+    flash("Post deleted", "success")
     return redirect('/')
 
 
@@ -127,11 +139,80 @@ def render_update_post(post_id):
 @app.route('/updatepost/<int:post_id>', methods=["POST"])
 def update_post(post_id):
     post = Posts.query.get_or_404(post_id)
-    post.title = request.form["title"]
-    post.content = request.form["content"]
+
+    if request.form["title"]:
+        post.title = request.form["title"]
+        flash("Post title updated", "success")
+
+    if request.form["content"]:
+        post.content = request.form["content"]
+        flash("Post content updated", "success")
+    
     post.creator_id = request.form["creator_id"]
 
     db.session.add(post)
     db.session.commit()
 
+
     return redirect(f'/post/{post_id}')
+
+
+# Tag-specific routes & view functions ---------------------------------------------------
+
+@app.route('/tag')
+def list_tags():
+    tags = Tags.query.all()
+
+    return render_template('indextags.html', tags=tags)
+
+
+@app.route("/tag/<int:tag_id>")
+def show_tag(tag_id):
+    tag = Tags.query.get_or_404(tag_id)
+    posts = db.session.query(Posts.title, PostsTags.tag_id, PostsTags.post_id).join(PostsTags).filter(PostsTags.tag_id == tag_id).all()
+    return render_template("tagdetail.html", tag=tag, posts=posts)
+
+
+@app.route('/addtag')
+def render_add_tag():
+
+    return render_template('addtag.html')
+
+
+@app.route('/addtag', methods=["POST"])
+def add_tag():
+    new_tag  = Tags(name = request.form["name"])
+
+    db.session.add(new_tag)
+    db.session.commit()
+
+    flash("New tag added", "success")
+    return redirect('/tag')
+
+
+@app.route("/delete/tag/<int:tag_id>", methods=["POST"])
+def delete_tag(tag_id):
+    Tags.query.filter(Tags.id == tag_id).delete()
+    db.session.commit()
+
+    flash("Tag deleted", "success")
+    return redirect('/')
+
+
+@app.route('/updatetag/<int:tag_id>')
+def render_update_tag(tag_id):
+    tag = Tags.query.get_or_404(tag_id)
+
+    return render_template('updatetag.html', tag=tag)
+
+
+@app.route('/updatetag/<int:tag_id>', methods=["POST"])
+def update_tag(tag_id):
+    tag = Tags.query.get_or_404(tag_id)
+    if request.form["name"]:
+        tag.name = request.form["name"]
+        db.session.add(tag)
+        db.session.commit()
+        flash(f"Tag renamed: {tag.name}", "success")
+
+    return redirect(f'/tag/{tag_id}')

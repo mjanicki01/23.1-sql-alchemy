@@ -3,9 +3,14 @@
 {% block content %}
 
     <h1>Update Post</h1>
+
+    <h3>{{post.title}}</h3>
+
+    <p>{{post.content}}</p>
+
     <form action="/updatepost/{{post.id}}" method="POST">
-        <input type="text" name="title" value = {{post.title}}>
-        <input type="text" name="content" value = {{post.content}}>
+        <input type="text" name="title" placeholder="Title">
+        <input type="text" name="content" placeholder="Content">
         <input type="text" name="creator_id" value={{post.creator_id}} style="display: none">
         <button>Update Post</button>
     </form>

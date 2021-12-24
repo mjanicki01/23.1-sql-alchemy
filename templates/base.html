@@ -4,9 +4,35 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/app.css">
     <title>{% block title %} {% endblock %}</title>
 </head>
+
 <body>
-    {% block content %} {% endblock %}
+
+    <nav>
+        <nav class = "navbar">
+            <a href="/">Users</a>
+            <a href="/adduser">Add User</a>
+            <a href="/posts">Posts</a>
+            <a href="/tag">Tags</a>
+            <a href="/addtag">Add Tag</a>
+        </nav>
+    </nav>
+
+    <section class="content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <section class="messages">
+            {% for category,msg in messages %}
+                <p class="{{category}}">{{msg}}</p>
+            {% endfor %}
+        </section>
+        {% endif %}
+        {% endwith %}
+
+        {% block content %} {% endblock %}
+    </section>
+
 </body>
 </html>

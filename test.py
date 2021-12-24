@@ -3,7 +3,7 @@ from unittest import TestCase
 from app import app
 from models import db, Users, Posts
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///blogly'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///blogly' #change to blogly_testdb
 app.config['SQLALCHEMY_ECHO'] = False
 
 app.config['TESTING'] = True
