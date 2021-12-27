@@ -4,17 +4,29 @@
 
     <h1>Update Post</h1>
 
+<section id="post-content">
     <h3>{{post.title}}</h3>
-
+    
     <p>{{post.content}}</p>
+</section>
 
+<section id="post-details">
     <form action="/updatepost/{{post.id}}" method="POST">
-        <input type="text" name="title" placeholder="Title">
-        <input type="text" name="content" placeholder="Content">
-        <input type="text" name="creator_id" value={{post.creator_id}} style="display: none">
+        <div>
+            <input type="text" name="title" placeholder="Title">
+            <input type="text" name="content" placeholder="Content">
+            <input type="text" name="creator_id" value={{post.creator_id}} style="display: none">
+        </div>
+        <div>
+        <b>Tags:</b>
+        {% for tag in tags %}
+            <input type="checkbox" name = "tags" id="tag_{{tag.id}}" value="{{tag.id}}"
+                {% if tag in post.tags %} checked {% endif %}>
+                <label for="tag_{{tag.id}}"> {{tag.name}} </label>
+        {%endfor%}
+        </div>
+</section>
         <button>Update Post</button>
     </form>
-
-
 
 {% endblock %}

@@ -58,3 +58,8 @@ a:hover {
     font-size: 1rem;
     border-radius: 1rem;
 }
+
+#post-content {
+    padding: .5rem;
+    margin: .5rem;    
+}

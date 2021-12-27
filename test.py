@@ -1,47 +1,31 @@
 from unittest import TestCase
 
 from app import app
-from models import db, Users, Posts
+from models import db, Users, Posts, Tags
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///blogly' #change to blogly_testdb
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///blogly_testdb'
 app.config['SQLALCHEMY_ECHO'] = False
-
 app.config['TESTING'] = True
-
 app.config['DEBUG_TB_HOSTS'] = ['dont-show-debug-toolbar']
-
-db.drop_all()
-db.create_all()
 
 
 class UsersTest(TestCase):
 
     def setUp(self):
-        Users.query.delete()
-        Posts.query.delete()
-
-        user = Users(first_name="F_Test", last_name="L_test", img_url="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png")
-        post = Posts(title="Title_Test", content="Content")
-        db.session.add(user, post)
-        db.session.commit()
-
-        self.user_id = user.id
-        self.user = user
-        self.post_id = post.id
-        self.post = post
+        db.drop_all()
+        db.create_all()
 
     def tearDown(self):
         db.session.rollback()
 
 
-        """
-        def test_index_load(self):
+    def test_index_load(self):
         with app.test_client() as client:
             res = client.get("/")
             html = res.get_data(as_text=True)
 
-            self.assertEqual(res.status_code, 200)
-            self.assertIn('Users', html) """
+        self.assertEqual(res.status_code, 200)
+        self.assertIn('Users', html)
 
 
     def test_user_detail_page(self):
@@ -53,9 +37,8 @@ class UsersTest(TestCase):
             self.assertIn(self.user.first_name, html)
             self.assertIn(self.user.last_name, html)
 
-        
-        """
-        def test_add_user(self):
+
+    def test_add_user(self):
         with app.test_client() as client:
             test_user = {"first_name": "Mad", "last_name": "Max", "image":"https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"}
             res = client.user("/adduser", data=test_user, follow_redirects=True)
@@ -63,7 +46,6 @@ class UsersTest(TestCase):
 
             self.assertEqual(res.status_code, 200)
             self.assertIn("Mad Max", html)
-        """
 
 
     def test_user_id_query_url(self):

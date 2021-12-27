@@ -2,26 +2,31 @@
 {% block title %}Post Detail{% endblock %}
 {% block content %}
 
+<section id="post-content">
     <h1>{{post.title}}</h1>
     
-    <h3>{{post.content}}</h3>
+    <p>{{post.content}}</p>
+</section>
 
-    <section id="post-details">
-        <p><i>By {{post.creator.first_name}} {{post.creator.last_name}}</i></p>
-        <p><i>Created at {{post.created_at}}</i></p>
-        <h4>Tags</h4>
+<section id="post-details">
+    <b>Tags:</b>
+    {% if tags%}
         <ul>
             {% for tag in tags %}
-            <li><a href="/tag/{{tag[1]}}">{{tag[0]}}</a></li>
+                <li><a href="/tag/{{tag[1]}}">{{tag[0]}}</a></li>
             {% endfor %}
         </ul>
-    </section>
+    {% else %}
+        <p>None</p>
+    {% endif %}
+    <p><i>By {{post.creator.first_name}} {{post.creator.last_name}}, Created at {{post.created_at}}</i></p>
+</section>
 
-    <form>
-        <button formaction="/updatepost/{{post.id}}" formmethod="GET">
-            Edit</button>
-        <button formaction="/delete/post/{{post.id}}" formmethod="POST">
-            Delete</button>
-    </form>
+<form>
+    <button formaction="/updatepost/{{post.id}}" formmethod="GET">
+        Edit</button>
+    <button formaction="/delete/post/{{post.id}}" formmethod="POST">
+        Delete</button>
+</form>
 
 {% endblock %}

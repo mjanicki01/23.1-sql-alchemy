@@ -21,6 +21,7 @@ def list_users():
     return render_template('index.html', users=users)
 
 
+
 # User-specific routes & view functions -------------------------------------------------------
 
 @app.route("/<int:user_id>")
@@ -102,8 +103,9 @@ def show_post(post_id):
 @app.route('/addpost/<int:user_id>')
 def render_add_post(user_id):
     user = Users.query.get_or_404(user_id)
+    tags = Tags.query.all()
 
-    return render_template('addpost.html', user=user)
+    return render_template('addpost.html', user=user, tags=tags)
 
 
 @app.route('/addpost', methods=["POST"])
@@ -111,7 +113,9 @@ def add_post():
     title = request.form["title"]
     content = request.form["content"]
     creator_id = request.form["creator_id"]
-    new_post  = Posts(title=title, content=content, creator_id=creator_id)
+    tag_ids = [int(num) for num in request.form.getlist("tags")]
+    tags = Tags.query.filter(Tags.id.in_(tag_ids)).all()
+    new_post  = Posts(title=title, content=content, creator_id=creator_id, tags=tags)
 
     db.session.add(new_post)
     db.session.commit()
@@ -132,8 +136,9 @@ def delete_post(post_id):
 @app.route('/updatepost/<int:post_id>')
 def render_update_post(post_id):
     post = Posts.query.get_or_404(post_id)
+    tags = Tags.query.all()
 
-    return render_template('updatepost.html', post=post)
+    return render_template('updatepost.html', post=post, tags=tags)
 
 
 @app.route('/updatepost/<int:post_id>', methods=["POST"])
@@ -147,6 +152,9 @@ def update_post(post_id):
     if request.form["content"]:
         post.content = request.form["content"]
         flash("Post content updated", "success")
+
+    tag_ids = [int(num) for num in request.form.getlist("tags")]
+    post.tags = Tags.query.filter(Tags.id.in_(tag_ids)).all()
     
     post.creator_id = request.form["creator_id"]
 
@@ -155,6 +163,8 @@ def update_post(post_id):
 
 
     return redirect(f'/post/{post_id}')
+
+
 
 
 # Tag-specific routes & view functions ---------------------------------------------------
