@@ -56,7 +56,7 @@ class BloglyTest(TestCase):
         with app.test_client() as client:
             test_user = Users.query.filter_by(first_name='Mad').first()
             test_user_id = test_user.id
-            res = client.post(f"/delete/<int:{test_user_id}>", data=test_user_id, follow_redirects=True)
+            res = client.post(f"/delete/<int:{test_user_id}>", data=test_user_id, follow_redirects=True) #AttributeError: 'int' object has no attribute 'items'
             html = res.get_data(as_text=True)
 
             self.assertEqual(res.status_code, 200)
