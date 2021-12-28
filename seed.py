@@ -1,5 +1,6 @@
 from models import Users, Posts, Tags, PostsTags, db
 from app import app
+from test import TestCase
 
 db.drop_all()
 db.create_all()
@@ -14,7 +15,7 @@ p2 = Posts(title="How to make a PB&J sandwich", content="Call mom", creator_id=3
 p3 = Posts(title="Pandas", content="Eat a lot of bamboo", creator_id=2)
 p4 = Posts(title="Favorite book list", content="Too many to fit on one page", creator_id=1)
 p5 = Posts(title="Favorite snacks", content="Too many to fit on one page", creator_id=2)
-p6 = Posts(title="Another post", content="With some more content", creator_id=3)
+p6 = Posts(title="Carrot", content="The carrot is a root vegetable, typically orange in color, though purple, black, red, white, and yellow cultivars exist, all of which are domesticated forms of the wild carrot, Daucus carota, native to Europe and Southwestern Asia", creator_id=3)
 
 t1 = Tags(name="Funny")
 t2 = Tags(name="Cooking")
@@ -32,7 +33,8 @@ pt4 = PostsTags(post_id=3, tag_id=2)
 pt5 = PostsTags(post_id=4, tag_id=3)
 pt6 = PostsTags(post_id=5, tag_id=2)
 pt7 = PostsTags(post_id=5, tag_id=3)
+pt8 = PostsTags(post_id=6, tag_id=2)
 
 
-db.session.add_all([pt1, pt2, pt3, pt4, pt5, pt6, pt7])
+db.session.add_all([pt1, pt2, pt3, pt4, pt5, pt6, pt7, pt8])
 db.session.commit()

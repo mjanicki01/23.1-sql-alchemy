@@ -43,7 +43,7 @@ class Posts(db.Model):
                     nullable=False)
 
     creator = db.relationship('Users', backref='posts')
-    tagged_posts = db.relationship('Tags', secondary="posts_tags", backref='posts')
+    tagged_posts = db.relationship('Tags', secondary="posts_tags", backref='posts', viewonly=True)
 
     def __repr__(self):
         return f"<Post {self.id} {self.title} {self.content} {self.created_at} {self.creator_id} >"
@@ -59,7 +59,7 @@ class Tags(db.Model):
     name = db.Column(db.String(15),
                     nullable=False, unique=True)
 
-    tagged_posts = db.relationship('Posts', secondary="posts_tags", backref='tags')
+    tagged_posts = db.relationship('Posts', secondary="posts_tags", backref='tags', viewonly=True)
 
     def __repr__(self):
         return f"<Tag {self.id} {self.name} >"
